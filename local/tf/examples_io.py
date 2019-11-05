@@ -243,7 +243,12 @@ class TarFileDataLoader(object):
             idx = int(name[:-4].split('_')[1])
             label = self._train_labels[idx]
             start_time = time.time()
-            mat = np.load(self._tar.extractfile(name))
+            start_time = time.time()
+            array_file = BytesIO()
+            array_file.write(self._tar.extractfile(name).read())
+            array_file.seek(0)
+            mat = np.fromfile(array_file)
+
             if self._logger is not None:
                 self._logger.info("Loading one minibatch take %d seconds." % (time.time() - start_time))
             self.queue.put((mat, label))
